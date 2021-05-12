@@ -124,10 +124,20 @@ local function get_active_track(track_type)
     return nil
 end
 
+-- https://www.rosettacode.org/wiki/URL_decoding#Lua
+function decode_char(hex)
+    return string.char(tonumber(hex, 16))
+end
+
+function decode_str(str)
+    local output, t = string.gsub(str, "%%(%x%x)", decode_char)
+    return output
+end
+
 local function get_active_subtitle_track_path()
     local _, track = get_active_track('sub')
     if track and track.external == true then
-        return track['external-filename']
+        return decode_str(track['external-filename']):sub(8)
     end
 end
 
